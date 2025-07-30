@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Converge AI - Financial Intelligence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <!-- ClaimCenter-style Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">C</div>
+        <div class="logo-text">Converge AI</div>
+        <div class="logo-badge">Enterprise</div>
+      </div>
+    </div>
+    
+    <!-- Active Consultations -->
+    <div class="consultations-section">
+      <div class="section-header">
+        <span class="section-title">Active Consultations</span>
+        <span class="section-count" id="active-count">0</span>
+      </div>
+      <div class="chat-list" id="active-chats">
+        <!-- Active chats appear here -->
+      </div>
+    </div>
+    
+    <!-- Recent History -->
+    <div class="consultations-section">
+      <div class="section-header">
+        <span class="section-title">Recent History</span>
+        <span class="section-count">1</span>
+      </div>
+      <div class="chat-list" id="archived-chats">
+        <div class="chat-item archived" data-chat-id="eleanor-chen">
+          <div class="chat-avatar">EC</div>
+          <div class="chat-details">
+            <div class="chat-name">Dr. Eleanor Chen</div>
+            <div class="chat-preview">403(b) loan consultation</div>
+          </div>
+          <div class="chat-meta">
+            <div class="chat-time">1h ago</div>
+            <div class="chat-status completed">Completed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sidebar-footer">
+      <div class="new-chat-btn" id="new-chat-btn">
+        <span>+ New Consultation</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Incoming Client Banner -->
+    <div class="client-banner" id="client-banner" style="display: none;">
+      <div class="banner-content">
+        <div class="client-indicator">
+          <div class="pulse-dot"></div>
+          <span>Incoming Priority Client</span>
+        </div>
+        <div class="client-preview">
+          <div class="client-avatar">JJ</div>
+          <div class="client-details">
+            <h3>James Jackson</h3>
+            <p>Texas University • UT Saver TSA 403(b)</p>
+            <div class="client-tags">
+              <span class="tag">High Value</span>
+              <span class="tag">35 Years</span>
+              <span class="tag">$127K Balance</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="banner-actions">
+        <button class="action-btn accept-btn" id="accept-client-btn">
+          Accept Consultation
+        </button>
+      </div>
+    </div>
+    
+    <!-- Welcome State -->
+    <div class="welcome-state" id="welcome-state">
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <div class="converge-icon">C</div>
+        </div>
+        <h1>Converge AI</h1>
+        <p class="subtitle">Enterprise Financial Intelligence Platform</p>
+        <div class="feature-grid">
+          <div class="feature">Real-time Context</div>
+          <div class="feature">Compliant Guidance</div>
+          <div class="feature">Intelligent Analysis</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Chat Interface -->
+    <div class="chat-interface" id="chat-interface" style="display: none;">
+      <div class="chat-header">
+        <div class="header-content">
+          <div class="client-info">
+            <div class="client-avatar-small" id="header-avatar">JJ</div>
+            <div class="client-meta">
+              <h3 id="client-name">James Jackson</h3>
+              <p id="client-details">Texas University • UT Saver TSA 403(b)</p>
+            </div>
+          </div>
+          <div class="context-indicator">
+            <span class="context-badge premium" id="client-id">P00051</span>
+            <span class="context-badge" id="client-age">Age 35</span>
+            <span class="context-badge live">Live Data</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="chat-messages" id="chat-messages">
+        <!-- Messages render here -->
+      </div>
+      
+      <div class="message-input-container" id="input-container">
+        <div class="input-enhancement">
+          <span>Powered by Vertesia </span>
+        </div>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            class="message-input" 
+            id="message-input" 
+            placeholder="Ask about plan details, contributions, or regulations..."
+            autocomplete="off"
+          />
+          <button class="send-btn" id="send-btn">Send</button>
+        </div>
+      </div>
+      
+      <!-- Archived View Notice -->
+      <div class="archived-notice" id="archived-notice" style="display: none;">
+        <div class="notice-content">
+          <span>This is an archived consultation. Viewing in read-only mode.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
