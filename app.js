@@ -1,4 +1,4 @@
-// Converge AI - Enterprise Financial Intelligence
+// Converge AI - Financial Services Integration
 class ConvergeAI {
   constructor() {
     this.activeChat = null;
@@ -12,7 +12,7 @@ class ConvergeAI {
 
   init() {
     this.setupEventListeners();
-    this.loadArchivedChats();
+    this.updateBreadcrumb('Financial Intelligence > Converge Chat');
     setTimeout(() => this.showIncomingCall(), 3000);
   }
 
@@ -31,6 +31,40 @@ class ConvergeAI {
     
     // Archived chat click
     document.querySelector('[data-chat-id="eleanor-chen"]')?.addEventListener('click', () => this.viewArchivedChat());
+    
+    // Sidebar navigation
+    document.querySelectorAll('.cc-subsection').forEach(item => {
+      item.addEventListener('click', () => this.handleSidebarNavigation(item));
+    });
+  }
+
+  handleSidebarNavigation(item) {
+    // Remove active class from all subsections
+    document.querySelectorAll('.cc-subsection').forEach(sub => sub.classList.remove('active'));
+    
+    // Add active class to clicked item
+    item.classList.add('active');
+    
+    const section = item.dataset.section;
+    
+    if (section === 'converge') {
+      this.updateBreadcrumb('Financial Intelligence > Converge Chat');
+      this.showConvergeInterface();
+    }
+  }
+
+  showConvergeInterface() {
+    // Show welcome state if no active chat
+    if (!this.activeChat) {
+      document.getElementById('welcome-state').style.display = 'flex';
+      document.getElementById('chat-interface').style.display = 'none';
+    } else {
+      this.showChatInterface();
+    }
+  }
+
+  updateBreadcrumb(path) {
+    document.getElementById('breadcrumb').textContent = path;
   }
 
   showIncomingCall() {
@@ -71,6 +105,7 @@ class ConvergeAI {
     this.addToSidebar(this.activeChat);
     this.addContextMessage();
     this.updateActiveCount();
+    this.updateBreadcrumb('Financial Intelligence > Converge Chat > Active Consultation');
   }
 
   startNewChat() {
@@ -80,7 +115,7 @@ class ConvergeAI {
     this.viewMode = 'active';
     this.activeChat = {
       id: chatId,
-      clientId: `P${String(this.chatCounter).padStart(5, '0')}`,
+      clientId: `P${String(this.chatCounter + 50).padStart(5, '0')}`,
       name: 'New Client',
       company: 'Company Name',
       accountType: 'Account Type',
@@ -95,10 +130,14 @@ class ConvergeAI {
     this.addToSidebar(this.activeChat);
     this.addContextMessage();
     this.updateActiveCount();
+    this.updateBreadcrumb('Financial Intelligence > Converge Chat > New Consultation');
   }
 
   showChatInterface() {
+    // Hide welcome
     document.getElementById('welcome-state').style.display = 'none';
+    
+    // Show chat interface
     document.getElementById('chat-interface').style.display = 'flex';
     document.getElementById('input-container').style.display = 'block';
     document.getElementById('archived-notice').style.display = 'none';
@@ -122,13 +161,13 @@ class ConvergeAI {
     const chatList = document.getElementById('active-chats');
     
     // Remove active class from all items
-    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.cc-chat-item').forEach(item => item.classList.remove('active'));
     
     // Check if item already exists
     let existingItem = document.querySelector(`[data-chat-id="${client.id}"]`);
     if (!existingItem) {
       existingItem = document.createElement('div');
-      existingItem.className = 'chat-item';
+      existingItem.className = 'cc-chat-item';
       existingItem.dataset.chatId = client.id;
       chatList.appendChild(existingItem);
       
@@ -141,20 +180,17 @@ class ConvergeAI {
     
     existingItem.classList.add('active');
     existingItem.innerHTML = `
-      <div class="chat-avatar">${client.avatar}<div class="active-indicator"></div></div>
-      <div class="chat-details">
-        <div class="chat-name">${client.name}</div>
-        <div class="chat-preview">Active consultation</div>
-      </div>
-      <div class="chat-meta">
-        <div class="chat-time">Now</div>
-        <div class="chat-status live">Live</div>
+      <div class="cc-chat-avatar">${client.avatar}</div>
+      <div class="cc-chat-details">
+        <div class="cc-chat-name">${client.name}</div>
+        <div class="cc-chat-preview">Active consultation</div>
+        <div class="cc-chat-status">Live</div>
       </div>
     `;
   }
 
   switchToChat(chatId) {
-    // Find the chat data (you'd store this more systematically in a real app)
+    // Find the chat data (simplified for demo)
     if (chatId === 'james-jackson') {
       this.activeChat = {
         id: 'james-jackson',
@@ -173,8 +209,10 @@ class ConvergeAI {
     this.showChatInterface();
     
     // Update sidebar selection
-    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.cc-chat-item').forEach(item => item.classList.remove('active'));
     document.querySelector(`[data-chat-id="${chatId}"]`).classList.add('active');
+    
+    this.updateBreadcrumb('Financial Intelligence > Converge Chat > Active Consultation');
   }
 
   addContextMessage() {
@@ -204,10 +242,13 @@ class ConvergeAI {
       balance: '$342,000'
     };
     
+    // Hide welcome
     document.getElementById('welcome-state').style.display = 'none';
+    
+    // Show chat interface in archived mode
     document.getElementById('chat-interface').style.display = 'flex';
     document.getElementById('input-container').style.display = 'none';
-    document.getElementById('archived-notice').style.display = 'flex';
+    document.getElementById('archived-notice').style.display = 'block';
     
     // Update header
     document.getElementById('client-name').textContent = this.activeChat.name;
@@ -218,26 +259,28 @@ class ConvergeAI {
     
     this.loadArchivedMessages();
     this.updateSidebarSelection('eleanor-chen');
+    this.updateBreadcrumb('Financial Intelligence > Converge Chat > Archived Consultation');
   }
 
   loadArchivedMessages() {
     const chatMessages = document.getElementById('chat-messages');
     chatMessages.innerHTML = '';
     
-    // Context message
+    // Context message for archived
     const contextHtml = `
       <div class="context-message archived">
         <div class="context-header">Archived Consultation - ${new Date().toLocaleDateString()}</div>
-        <div class="context-details">
+        <div class="context-grid">
           <div class="context-item"><span class="label">Participant:</span><span class="value">${this.activeChat.name}</span></div>
           <div class="context-item"><span class="label">Balance:</span><span class="value">${this.activeChat.balance}</span></div>
           <div class="context-item"><span class="label">Outcome:</span><span class="value">Loan inquiry resolved</span></div>
+          <div class="context-item"><span class="label">Duration:</span><span class="value">24 minutes</span></div>
         </div>
       </div>
     `;
     chatMessages.insertAdjacentHTML('beforeend', contextHtml);
     
-    // Archived messages
+    // Archived messages with proper formatting
     const archivedMessages = [
       {
         content: "I'm looking to borrow from my 403(b) account. What are my options?",
@@ -245,27 +288,101 @@ class ConvergeAI {
         timestamp: new Date(Date.now() - 3600000)
       },
       {
-        content: `Based on Dr. Eleanor Chen's Harvard TDA 403(b) plan:
-
-**Loan Eligibility**: Yes, participant loans are permitted
-**Maximum Amount**: $50,000 or 50% of vested balance (whichever is less)
-**Current Vested Balance**: $342,000
-**Maximum Loan Available**: $50,000
-
-**Key Requirements**:
-- Minimum loan amount: $1,000
-- Maximum repayment period: 5 years (extended for primary residence)
-- Interest rate: Prime Rate + 1% (currently 8.5%)
-- Repayment: Automated payroll deduction required
-
-**Important Considerations**:
-- Outstanding loans reduce death benefit
-- Default triggers taxable distribution
-- Cannot borrow if previous loan in default
-
-*Source: Harvard University Retirement Plan Document, Article VII, Section 7.2*`,
+        content: `
+          <div class="ai-response">
+            <div class="response-header">
+              <strong>Answer</strong>
+            </div>
+            <p>Dr. Chen, based on your Harvard TDA - 403(b) plan, you can borrow a <strong>minimum of $1,000 up to a maximum of 50% of your account balance, not to exceed $50,000</strong>. The $50,000 limit would be reduced if you've had any other TDA loans outstanding in the past 12 months. You're currently showing no active loans in our system.</p>
+            
+            <div class="response-section">
+              <div class="section-header">
+                <strong>Next Steps</strong>
+              </div>
+              <ol>
+                <li>Verify loan eligibility (must be actively employed)</li>
+                <li>Determine maximum loan amount (50% of TDA accumulations, up to $50,000)</li>
+                <li>Select loan type (general-purpose or residential)</li>
+                <li>Complete loan application with spousal consent if married</li>
+                <li>Pay applicable loan fees ($75 for general-purpose, $125 for residential)</li>
+              </ol>
+            </div>
+            
+            <div class="response-section">
+              <div class="section-header">
+                <strong>Reminders</strong>
+              </div>
+              <ul>
+                <li>Maximum of two outstanding loans allowed</li>
+                <li>Loan repayment period: 5 years (general) or 10 years (residential)</li>
+                <li>$25 annual maintenance fee applies</li>
+              </ul>
+            </div>
+            
+            <div class="response-section">
+              <div class="section-header">
+                <strong>Citations</strong>
+              </div>
+              <ul class="citations">
+                <li>Harvard University Tax-Deferred Annuity (TDA) Plan Summary Plan Description</li>
+                <li>Synthetic Participant Database (P00052 - Dr. Eleanor Chen)</li>
+              </ul>
+            </div>
+          </div>
+        `,
         isUser: false,
         timestamp: new Date(Date.now() - 3300000)
+      },
+      {
+        content: "What happens if I leave Harvard before repaying the loan?",
+        isUser: true,
+        timestamp: new Date(Date.now() - 3000000)
+      },
+      {
+        content: `
+          <div class="ai-response">
+            <div class="response-header">
+              <strong>Answer</strong>
+            </div>
+            <p>Upon termination of employment with Harvard University, the loan acceleration provisions of your TDA plan will be triggered. <strong>The entire outstanding balance becomes due within 90 days</strong> of your separation from service.</p>
+            
+            <div class="response-section">
+              <div class="section-header">
+                <strong>Next Steps</strong>
+              </div>
+              <ol>
+                <li>Contact Harvard Benefits Office before separation</li>
+                <li>Determine exact outstanding loan balance</li>
+                <li>Arrange for full repayment within 90-day grace period</li>
+                <li>Consider rollover options with new employer plan</li>
+                <li>Consult tax advisor regarding potential tax implications</li>
+              </ol>
+            </div>
+            
+            <div class="response-section">
+              <div class="section-header">
+                <strong>Reminders</strong>
+              </div>
+              <ul>
+                <li>Unpaid balance becomes taxable distribution</li>
+                <li>10% early withdrawal penalty applies if under age 59½</li>
+                <li>New employer plan may not accept loan transfers</li>
+              </ul>
+            </div>
+            
+            <div class="response-section">
+              <div class="section-header">
+                <strong>Citations</strong>
+              </div>
+              <ul class="citations">
+                <li>Harvard TDA Plan Loan Policy, Section 7.5 - Termination Provisions</li>
+                <li>IRS Publication 575 - Pension and Annuity Income</li>
+              </ul>
+            </div>
+          </div>
+        `,
+        isUser: false,
+        timestamp: new Date(Date.now() - 2700000)
       }
     ];
     
@@ -287,7 +404,10 @@ class ConvergeAI {
       const response = await fetch('https://muinf.app.n8n.cloud/webhook-test/62377baa-ee4e-4802-9377-ccc0114a159b', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: message })
+        body: JSON.stringify({ 
+          message: message,
+          participant: this.activeChat
+        })
       });
       
       if (!response.ok) throw new Error('Request failed');
@@ -317,11 +437,11 @@ class ConvergeAI {
   addMessage(content, isUser, saveToHistory = false) {
     const messageHtml = `
       <div class="message ${isUser ? 'user-message' : 'ai-message'}">
+        <div class="message-avatar ${isUser ? 'user-avatar' : 'ai-avatar'}">${isUser ? 'FA' : 'C'}</div>
         <div class="message-content">
-          <div class="message-text">${this.formatContent(content)}</div>
+          <div class="message-text">${content}</div>
           <div class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
         </div>
-        ${isUser ? '<div class="message-avatar user-avatar">FA</div>' : '<div class="message-avatar ai-avatar">C</div>'}
       </div>
     `;
     this.appendToChat(messageHtml);
@@ -334,22 +454,14 @@ class ConvergeAI {
   addArchivedMessage(content, isUser, timestamp) {
     const messageHtml = `
       <div class="message ${isUser ? 'user-message' : 'ai-message'} archived">
+        <div class="message-avatar ${isUser ? 'user-avatar' : 'ai-avatar'}">${isUser ? 'EC' : 'C'}</div>
         <div class="message-content">
-          <div class="message-text">${this.formatContent(content)}</div>
+          <div class="message-text">${content}</div>
           <div class="message-time">${timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
         </div>
-        ${isUser ? '<div class="message-avatar user-avatar">EC</div>' : '<div class="message-avatar ai-avatar">C</div>'}
       </div>
     `;
     this.appendToChat(messageHtml);
-  }
-
-  formatContent(content) {
-    return content
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/\n/g, '<br>')
-      .replace(/^- /gm, '• ');
   }
 
   showTyping() {
@@ -377,19 +489,15 @@ class ConvergeAI {
   }
 
   updateSidebarSelection(selectedId) {
-    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.cc-chat-item').forEach(item => item.classList.remove('active'));
     const selectedItem = document.querySelector(`[data-chat-id="${selectedId}"]`);
     if (selectedItem) selectedItem.classList.add('active');
   }
 
   updateActiveCount() {
-    const activeChats = document.querySelectorAll('#active-chats .chat-item').length;
+    const activeChats = document.querySelectorAll('#active-chats .cc-chat-item').length;
     document.getElementById('active-count').textContent = activeChats;
-  }
-
-  loadArchivedChats() {
-    // Eleanor Chen is already in HTML, just add click handler
-    // This method exists for consistency with original structure
+    document.getElementById('ai-count').textContent = activeChats > 0 ? activeChats : '1';
   }
 }
 
