@@ -3,206 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ClaimCenter - AI Intelligence</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Converge AI - Financial Intelligence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
-  <!-- ClaimCenter Top Navigation -->
-  <div class="cc-top-nav">
-    <div class="cc-nav-content">
-      <div class="cc-nav-left">
-        <span class="cc-logo">ClaimCenter™</span>
-        <nav class="cc-nav-menu">
-          <span class="cc-nav-item">Desktop ▼</span>
-          <span class="cc-nav-item">Claim ▼</span>
-          <span class="cc-nav-item">Search ▼</span>
-          <span class="cc-nav-item">Address Book ▼</span>
-          <span class="cc-nav-item">Vacation</span>
-        </nav>
+  <!-- ClaimCenter-style Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">C</div>
+        <div class="logo-text">Converge AI</div>
+        <div class="logo-badge">Enterprise</div>
       </div>
-      <div class="cc-nav-right">
-        <span class="cc-nav-item">⚙️ Settings</span>
-        <span class="cc-nav-item">Go to (Alt+/)</span>
+    </div>
+    
+    <!-- Active Consultations -->
+    <div class="consultations-section">
+      <div class="section-header">
+        <span class="section-title">Active Consultations</span>
+        <span class="section-count" id="active-count">0</span>
+      </div>
+      <div class="chat-list" id="active-chats">
+        <!-- Active chats appear here -->
+      </div>
+    </div>
+    
+    <!-- Recent History -->
+    <div class="consultations-section">
+      <div class="section-header">
+        <span class="section-title">Recent History</span>
+        <span class="section-count">1</span>
+      </div>
+      <div class="chat-list" id="archived-chats">
+        <div class="chat-item archived" data-chat-id="eleanor-chen">
+          <div class="chat-avatar">EC</div>
+          <div class="chat-details">
+            <div class="chat-name">Dr. Eleanor Chen</div>
+            <div class="chat-preview">403(b) loan consultation</div>
+          </div>
+          <div class="chat-meta">
+            <div class="chat-time">1h ago</div>
+            <div class="chat-status completed">Completed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sidebar-footer">
+      <div class="new-chat-btn" id="new-chat-btn">
+        <span>+ New Consultation</span>
       </div>
     </div>
   </div>
-
-  <!-- Main Container -->
-  <div class="cc-container">
-    <!-- ClaimCenter Sidebar -->
-    <div class="cc-sidebar">
-      <!-- Actions Header -->
-      <div class="cc-actions-header">ACTIONS</div>
-      
-      <!-- AI Intelligence Section -->
-      <div class="cc-nav-section">
-        <div class="cc-section-header">
-          <span class="cc-section-icon">🤖</span>
-          <span class="cc-section-title">AI Intelligence</span>
-          <span class="cc-section-count" id="ai-count">1</span>
+  
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Incoming Client Banner -->
+    <div class="client-banner" id="client-banner" style="display: none;">
+      <div class="banner-content">
+        <div class="client-indicator">
+          <div class="pulse-dot"></div>
+          <span>Incoming Priority Client</span>
         </div>
-        <div class="cc-section-content">
-          <div class="cc-subsection active" data-section="converge">
-            <span class="cc-subsection-icon">💬</span>
-            <span class="cc-subsection-title">Converge Chat</span>
-          </div>
-          <div class="cc-subsection" data-section="analytics">
-            <span class="cc-subsection-icon">📊</span>
-            <span class="cc-subsection-title">Analytics</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Active Consultations -->
-      <div class="cc-nav-section">
-        <div class="cc-section-header">
-          <span class="cc-section-icon">💬</span>
-          <span class="cc-section-title">Active Consultations</span>
-          <span class="cc-section-count" id="active-count">0</span>
-        </div>
-        <div class="cc-section-content" id="active-chats">
-          <!-- Active chats appear here -->
-        </div>
-      </div>
-
-      <!-- Recent History -->
-      <div class="cc-nav-section">
-        <div class="cc-section-header">
-          <span class="cc-section-icon">📝</span>
-          <span class="cc-section-title">Recent History</span>
-          <span class="cc-section-count">1</span>
-        </div>
-        <div class="cc-section-content">
-          <div class="cc-chat-item archived" data-chat-id="eleanor-chen">
-            <div class="cc-chat-avatar">EC</div>
-            <div class="cc-chat-details">
-              <div class="cc-chat-name">Dr. Eleanor Chen</div>
-              <div class="cc-chat-preview">403(b) loan consultation</div>
-              <div class="cc-chat-status completed">Completed</div>
+        <div class="client-preview">
+          <div class="client-avatar">JJ</div>
+          <div class="client-details">
+            <h3>James Jackson</h3>
+            <p>Texas University • UT Saver TSA 403(b)</p>
+            <div class="client-tags">
+              <span class="tag">High Value</span>
+              <span class="tag">35 Years</span>
+              <span class="tag">$127K Balance</span>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Other ClaimCenter Modules -->
-      <div class="cc-nav-section">
-        <div class="cc-section-header">
-          <span class="cc-section-icon">📋</span>
-          <span class="cc-section-title">Activities</span>
-          <span class="cc-section-count">4</span>
-        </div>
-      </div>
-
-      <div class="cc-nav-section">
-        <div class="cc-section-header">
-          <span class="cc-section-icon">🔍</span>
-          <span class="cc-section-title">Claims</span>
-          <span class="cc-section-count">2</span>
-        </div>
-      </div>
-
-      <div class="cc-nav-section">
-        <div class="cc-section-header">
-          <span class="cc-section-icon">💰</span>
-          <span class="cc-section-title">Exposures</span>
-          <span class="cc-section-count">0</span>
-        </div>
-      </div>
-
-      <!-- New Consultation Button -->
-      <div class="cc-sidebar-footer">
-        <button class="cc-new-btn" id="new-chat-btn">+ New Consultation</button>
+      <div class="banner-actions">
+        <button class="action-btn accept-btn" id="accept-client-btn">
+          Accept Consultation
+        </button>
       </div>
     </div>
-
-    <!-- Main Content Area -->
-    <div class="cc-main-content">
-      <!-- Breadcrumb -->
-      <div class="cc-breadcrumb" id="breadcrumb">
-        AI Intelligence > Converge Chat
+    
+    <!-- Welcome State -->
+    <div class="welcome-state" id="welcome-state">
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <div class="converge-icon">C</div>
+        </div>
+        <h1>Converge AI</h1>
+        <p class="subtitle">Enterprise Financial Intelligence Platform</p>
+        <div class="feature-grid">
+          <div class="feature">Real-time Context</div>
+          <div class="feature">Compliant Guidance</div>
+          <div class="feature">Intelligent Analysis</div>
+        </div>
       </div>
-
-      <!-- Incoming Client Banner -->
-      <div class="cc-client-banner" id="client-banner" style="display: none;">
-        <div class="cc-banner-content">
-          <div class="cc-banner-indicator">
-            <div class="cc-pulse-dot"></div>
-            <span>INCOMING PRIORITY CLIENT</span>
-          </div>
-          <div class="cc-client-preview">
-            <div class="cc-client-avatar">JJ</div>
-            <div class="cc-client-info">
-              <h3>James Jackson</h3>
-              <p>Texas University • UT Saver TSA 403(b)</p>
-              <div class="cc-client-tags">
-                <span class="cc-tag">High Value</span>
-                <span class="cc-tag">35 Years</span>
-                <span class="cc-tag">$127K Balance</span>
-              </div>
+    </div>
+    
+    <!-- Chat Interface -->
+    <div class="chat-interface" id="chat-interface" style="display: none;">
+      <div class="chat-header">
+        <div class="header-content">
+          <div class="client-info">
+            <div class="client-avatar-small" id="header-avatar">JJ</div>
+            <div class="client-meta">
+              <h3 id="client-name">James Jackson</h3>
+              <p id="client-details">Texas University • UT Saver TSA 403(b)</p>
             </div>
           </div>
-        </div>
-        <div class="cc-banner-actions">
-          <button class="cc-btn cc-btn-primary" id="accept-client-btn">Accept Consultation</button>
-        </div>
-      </div>
-
-      <!-- Welcome State -->
-      <div class="cc-welcome" id="welcome-state">
-        <div class="cc-welcome-content">
-          <h1>Converge AI Intelligence</h1>
-          <p>Enterprise financial consultation platform integrated with ClaimCenter</p>
-          <div class="cc-feature-list">
-            <div class="cc-feature">✓ Real-time participant data access</div>
-            <div class="cc-feature">✓ Compliance-aware guidance</div>
-            <div class="cc-feature">✓ Automated workflow integration</div>
+          <div class="context-indicator">
+            <span class="context-badge premium" id="client-id">P00051</span>
+            <span class="context-badge" id="client-age">Age 35</span>
+            <span class="context-badge live">Live Data</span>
           </div>
         </div>
       </div>
-
-      <!-- Chat Interface -->
-      <div class="cc-chat-interface" id="chat-interface" style="display: none;">
-        <!-- Chat Header -->
-        <div class="cc-chat-header">
-          <div class="cc-header-content">
-            <div class="cc-client-summary">
-              <div class="cc-client-avatar-sm" id="header-avatar">JJ</div>
-              <div class="cc-client-meta">
-                <h3 id="client-name">James Jackson</h3>
-                <p id="client-details">Texas University • UT Saver TSA 403(b)</p>
-              </div>
-            </div>
-            <div class="cc-context-badges">
-              <span class="cc-badge cc-badge-primary" id="client-id">P00051</span>
-              <span class="cc-badge" id="client-age">Age 35</span>
-              <span class="cc-badge cc-badge-success">Live Data</span>
-            </div>
-          </div>
+      
+      <div class="chat-messages" id="chat-messages">
+        <!-- Messages render here -->
+      </div>
+      
+      <div class="message-input-container" id="input-container">
+        <div class="input-enhancement">
+          <span>Powered by Vertesia </span>
         </div>
-
-        <!-- Chat Messages -->
-        <div class="cc-chat-messages" id="chat-messages">
-          <!-- Messages render here -->
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            class="message-input" 
+            id="message-input" 
+            placeholder="Ask about plan details, contributions, or regulations..."
+            autocomplete="off"
+          />
+          <button class="send-btn" id="send-btn">Send</button>
         </div>
-
-        <!-- Message Input -->
-        <div class="cc-message-input" id="input-container">
-          <div class="cc-input-label">Powered by Converge AI Intelligence</div>
-          <div class="cc-input-wrapper">
-            <input 
-              type="text" 
-              class="cc-input" 
-              id="message-input" 
-              placeholder="Ask about plan details, contributions, or regulations..."
-              autocomplete="off"
-            />
-            <button class="cc-btn cc-btn-primary" id="send-btn">Send</button>
-          </div>
-        </div>
-
-        <!-- Archived Notice -->
-        <div class="cc-archived-notice" id="archived-notice" style="display: none;">
+      </div>
+      
+      <!-- Archived View Notice -->
+      <div class="archived-notice" id="archived-notice" style="display: none;">
+        <div class="notice-content">
           <span>This is an archived consultation. Viewing in read-only mode.</span>
         </div>
       </div>
