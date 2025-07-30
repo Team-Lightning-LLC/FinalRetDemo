@@ -1,4 +1,4 @@
-// Converge AI - Enterprise Financial Intelligence
+// Converge AI - ClaimCenter Integration
 class ConvergeAI {
   constructor() {
     this.activeChat = null;
@@ -12,7 +12,7 @@ class ConvergeAI {
 
   init() {
     this.setupEventListeners();
-    this.loadArchivedChats();
+    this.updateBreadcrumb('AI Intelligence > Converge Chat');
     setTimeout(() => this.showIncomingCall(), 3000);
   }
 
@@ -31,6 +31,76 @@ class ConvergeAI {
     
     // Archived chat click
     document.querySelector('[data-chat-id="eleanor-chen"]')?.addEventListener('click', () => this.viewArchivedChat());
+    
+    // Sidebar navigation
+    document.querySelectorAll('.cc-subsection').forEach(item => {
+      item.addEventListener('click', () => this.handleSidebarNavigation(item));
+    });
+  }
+
+  handleSidebarNavigation(item) {
+    // Remove active class from all subsections
+    document.querySelectorAll('.cc-subsection').forEach(sub => sub.classList.remove('active'));
+    
+    // Add active class to clicked item
+    item.classList.add('active');
+    
+    const section = item.dataset.section;
+    
+    if (section === 'converge') {
+      this.updateBreadcrumb('AI Intelligence > Converge Chat');
+      // Show converge chat interface
+    } else if (section === 'analytics') {
+      this.updateBreadcrumb('AI Intelligence > Analytics');
+      this.showAnalyticsDashboard();
+    }
+  }
+
+  showAnalyticsDashboard() {
+    // Hide chat interface and show analytics placeholder
+    document.getElementById('chat-interface').style.display = 'none';
+    document.getElementById('welcome-state').style.display = 'none';
+    
+    // Create analytics placeholder
+    let analyticsDiv = document.getElementById('analytics-dashboard');
+    if (!analyticsDiv) {
+      analyticsDiv = document.createElement('div');
+      analyticsDiv.id = 'analytics-dashboard';
+      analyticsDiv.className = 'cc-analytics-dashboard';
+      analyticsDiv.innerHTML = `
+        <div class="cc-analytics-content">
+          <h2>Retirement Analytics Dashboard</h2>
+          <div class="cc-analytics-grid">
+            <div class="cc-analytics-card">
+              <h3>Active Consultations</h3>
+              <div class="cc-metric">0</div>
+            </div>
+            <div class="cc-analytics-card">
+              <h3>Completed This Week</h3>
+              <div class="cc-metric">12</div>
+            </div>
+            <div class="cc-analytics-card">
+              <h3>Avg Response Time</h3>
+              <div class="cc-metric">2.3s</div>
+            </div>
+            <div class="cc-analytics-card">
+              <h3>Participant Satisfaction</h3>
+              <div class="cc-metric">94%</div>
+            </div>
+          </div>
+          <div class="cc-analytics-note">
+            <p>Analytics module integration in development</p>
+          </div>
+        </div>
+      `;
+      document.querySelector('.cc-main-content').appendChild(analyticsDiv);
+    }
+    
+    analyticsDiv.style.display = 'flex';
+  }
+
+  updateBreadcrumb(path) {
+    document.getElementById('breadcrumb').textContent = path;
   }
 
   showIncomingCall() {
@@ -71,6 +141,7 @@ class ConvergeAI {
     this.addToSidebar(this.activeChat);
     this.addContextMessage();
     this.updateActiveCount();
+    this.updateBreadcrumb('AI Intelligence > Converge Chat > Active Consultation');
   }
 
   startNewChat() {
@@ -80,7 +151,7 @@ class ConvergeAI {
     this.viewMode = 'active';
     this.activeChat = {
       id: chatId,
-      clientId: `P${String(this.chatCounter).padStart(5, '0')}`,
+      clientId: `P${String(this.chatCounter + 50).padStart(5, '0')}`,
       name: 'New Client',
       company: 'Company Name',
       accountType: 'Account Type',
@@ -95,10 +166,16 @@ class ConvergeAI {
     this.addToSidebar(this.activeChat);
     this.addContextMessage();
     this.updateActiveCount();
+    this.updateBreadcrumb('AI Intelligence > Converge Chat > New Consultation');
   }
 
   showChatInterface() {
+    // Hide other views
     document.getElementById('welcome-state').style.display = 'none';
+    const analyticsDiv = document.getElementById('analytics-dashboard');
+    if (analyticsDiv) analyticsDiv.style.display = 'none';
+    
+    // Show chat interface
     document.getElementById('chat-interface').style.display = 'flex';
     document.getElementById('input-container').style.display = 'block';
     document.getElementById('archived-notice').style.display = 'none';
@@ -122,13 +199,13 @@ class ConvergeAI {
     const chatList = document.getElementById('active-chats');
     
     // Remove active class from all items
-    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.cc-chat-item').forEach(item => item.classList.remove('active'));
     
     // Check if item already exists
     let existingItem = document.querySelector(`[data-chat-id="${client.id}"]`);
     if (!existingItem) {
       existingItem = document.createElement('div');
-      existingItem.className = 'chat-item';
+      existingItem.className = 'cc-chat-item';
       existingItem.dataset.chatId = client.id;
       chatList.appendChild(existingItem);
       
@@ -141,20 +218,17 @@ class ConvergeAI {
     
     existingItem.classList.add('active');
     existingItem.innerHTML = `
-      <div class="chat-avatar">${client.avatar}<div class="active-indicator"></div></div>
-      <div class="chat-details">
-        <div class="chat-name">${client.name}</div>
-        <div class="chat-preview">Active consultation</div>
-      </div>
-      <div class="chat-meta">
-        <div class="chat-time">Now</div>
-        <div class="chat-status live">Live</div>
+      <div class="cc-chat-avatar">${client.avatar}</div>
+      <div class="cc-chat-details">
+        <div class="cc-chat-name">${client.name}</div>
+        <div class="cc-chat-preview">Active consultation</div>
+        <div class="cc-chat-status">Live</div>
       </div>
     `;
   }
 
   switchToChat(chatId) {
-    // Find the chat data (you'd store this more systematically in a real app)
+    // Find the chat data (simplified for demo)
     if (chatId === 'james-jackson') {
       this.activeChat = {
         id: 'james-jackson',
@@ -173,8 +247,10 @@ class ConvergeAI {
     this.showChatInterface();
     
     // Update sidebar selection
-    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.cc-chat-item').forEach(item => item.classList.remove('active'));
     document.querySelector(`[data-chat-id="${chatId}"]`).classList.add('active');
+    
+    this.updateBreadcrumb('AI Intelligence > Converge Chat > Active Consultation');
   }
 
   addContextMessage() {
@@ -204,10 +280,15 @@ class ConvergeAI {
       balance: '$342,000'
     };
     
+    // Hide other views
     document.getElementById('welcome-state').style.display = 'none';
+    const analyticsDiv = document.getElementById('analytics-dashboard');
+    if (analyticsDiv) analyticsDiv.style.display = 'none';
+    
+    // Show chat interface in archived mode
     document.getElementById('chat-interface').style.display = 'flex';
     document.getElementById('input-container').style.display = 'none';
-    document.getElementById('archived-notice').style.display = 'flex';
+    document.getElementById('archived-notice').style.display = 'block';
     
     // Update header
     document.getElementById('client-name').textContent = this.activeChat.name;
@@ -218,6 +299,7 @@ class ConvergeAI {
     
     this.loadArchivedMessages();
     this.updateSidebarSelection('eleanor-chen');
+    this.updateBreadcrumb('AI Intelligence > Converge Chat > Archived Consultation');
   }
 
   loadArchivedMessages() {
@@ -228,10 +310,11 @@ class ConvergeAI {
     const contextHtml = `
       <div class="context-message archived">
         <div class="context-header">Archived Consultation - ${new Date().toLocaleDateString()}</div>
-        <div class="context-details">
+        <div class="context-grid">
           <div class="context-item"><span class="label">Participant:</span><span class="value">${this.activeChat.name}</span></div>
           <div class="context-item"><span class="label">Balance:</span><span class="value">${this.activeChat.balance}</span></div>
           <div class="context-item"><span class="label">Outcome:</span><span class="value">Loan inquiry resolved</span></div>
+          <div class="context-item"><span class="label">Duration:</span><span class="value">24 minutes</span></div>
         </div>
       </div>
     `;
@@ -266,6 +349,32 @@ class ConvergeAI {
 *Source: Harvard University Retirement Plan Document, Article VII, Section 7.2*`,
         isUser: false,
         timestamp: new Date(Date.now() - 3300000)
+      },
+      {
+        content: "What happens if I leave Harvard before repaying the loan?",
+        isUser: true,
+        timestamp: new Date(Date.now() - 3000000)
+      },
+      {
+        content: `Upon termination of employment with Harvard University:
+
+**Loan Acceleration**: The entire outstanding balance becomes due
+**Grace Period**: 90 days to repay in full
+**Default Consequences**: 
+- Unpaid balance treated as taxable distribution
+- Additional 10% early withdrawal penalty if under age 59½
+- 1099-R issued for tax reporting
+
+**Options Available**:
+1. **Full Repayment**: Pay outstanding balance within 90 days
+2. **Rollover**: Some plans accept loans - verify with new employer
+3. **Continue Payments**: May be possible if plan allows (rare)
+
+**Recommendation**: Contact Harvard Benefits Office before separation to discuss options. Consider loan timing carefully if job change is anticipated.
+
+*Reference: Harvard TDA Plan Loan Policy, Section 7.5 - Termination Provisions*`,
+        isUser: false,
+        timestamp: new Date(Date.now() - 2700000)
       }
     ];
     
@@ -287,7 +396,10 @@ class ConvergeAI {
       const response = await fetch('https://muinf.app.n8n.cloud/webhook-test/62377baa-ee4e-4802-9377-ccc0114a159b', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: message })
+        body: JSON.stringify({ 
+          message: message,
+          participant: this.activeChat
+        })
       });
       
       if (!response.ok) throw new Error('Request failed');
@@ -317,11 +429,11 @@ class ConvergeAI {
   addMessage(content, isUser, saveToHistory = false) {
     const messageHtml = `
       <div class="message ${isUser ? 'user-message' : 'ai-message'}">
+        <div class="message-avatar ${isUser ? 'user-avatar' : 'ai-avatar'}">${isUser ? 'FA' : 'C'}</div>
         <div class="message-content">
           <div class="message-text">${this.formatContent(content)}</div>
           <div class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
         </div>
-        ${isUser ? '<div class="message-avatar user-avatar">FA</div>' : '<div class="message-avatar ai-avatar">C</div>'}
       </div>
     `;
     this.appendToChat(messageHtml);
@@ -334,11 +446,11 @@ class ConvergeAI {
   addArchivedMessage(content, isUser, timestamp) {
     const messageHtml = `
       <div class="message ${isUser ? 'user-message' : 'ai-message'} archived">
+        <div class="message-avatar ${isUser ? 'user-avatar' : 'ai-avatar'}">${isUser ? 'EC' : 'C'}</div>
         <div class="message-content">
           <div class="message-text">${this.formatContent(content)}</div>
           <div class="message-time">${timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
         </div>
-        ${isUser ? '<div class="message-avatar user-avatar">EC</div>' : '<div class="message-avatar ai-avatar">C</div>'}
       </div>
     `;
     this.appendToChat(messageHtml);
@@ -377,19 +489,15 @@ class ConvergeAI {
   }
 
   updateSidebarSelection(selectedId) {
-    document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('.cc-chat-item').forEach(item => item.classList.remove('active'));
     const selectedItem = document.querySelector(`[data-chat-id="${selectedId}"]`);
     if (selectedItem) selectedItem.classList.add('active');
   }
 
   updateActiveCount() {
-    const activeChats = document.querySelectorAll('#active-chats .chat-item').length;
+    const activeChats = document.querySelectorAll('#active-chats .cc-chat-item').length;
     document.getElementById('active-count').textContent = activeChats;
-  }
-
-  loadArchivedChats() {
-    // Eleanor Chen is already in HTML, just add click handler
-    // This method exists for consistency with original structure
+    document.getElementById('ai-count').textContent = activeChats > 0 ? activeChats : '1';
   }
 }
 
