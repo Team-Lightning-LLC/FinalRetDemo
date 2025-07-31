@@ -6,6 +6,7 @@ class ConvergeAI {
     this.messages = {};
     this.viewMode = 'active';
     this.chatCounter = 0;
+    this.chatData = {}; // Store all chat data persistently
 
     this.init();
   }
@@ -55,9 +56,12 @@ class ConvergeAI {
 
   showConvergeInterface() {
     // Show welcome state if no active chat
-    if (!this.activeChat) {
+    if (!this.activeChat || this.viewMode === 'archived') {
       document.getElementById('welcome-state').style.display = 'flex';
       document.getElementById('chat-interface').style.display = 'none';
+      this.viewMode = 'active';
+      this.activeChat = null;
+      this.activeChatId = null;
     } else {
       this.showChatInterface();
     }
@@ -85,7 +89,8 @@ class ConvergeAI {
   startJamesJacksonConsultation() {
     this.chatCounter++;
     this.viewMode = 'active';
-    this.activeChat = {
+    
+    const jamesData = {
       id: 'james-jackson',
       clientId: 'P00051',
       name: 'James Jackson',
@@ -95,7 +100,12 @@ class ConvergeAI {
       avatar: 'JJ',
       balance: '$127,000'
     };
+    
+    this.activeChat = jamesData;
     this.activeChatId = 'james-jackson';
+    
+    // Store chat data persistently
+    this.chatData['james-jackson'] = jamesData;
     
     if (!this.messages[this.activeChatId]) {
       this.messages[this.activeChatId] = [];
@@ -103,7 +113,6 @@ class ConvergeAI {
     
     this.showChatInterface();
     this.addToSidebar(this.activeChat);
-    this.addContextMessage();
     this.updateActiveCount();
     this.updateBreadcrumb('Financial Intelligence > Converge Chat > Active Consultation');
   }
@@ -113,7 +122,8 @@ class ConvergeAI {
     const chatId = `consultation-${this.chatCounter}`;
     
     this.viewMode = 'active';
-    this.activeChat = {
+    
+    const newChatData = {
       id: chatId,
       clientId: `P${String(this.chatCounter + 50).padStart(5, '0')}`,
       name: 'New Client',
@@ -123,12 +133,17 @@ class ConvergeAI {
       avatar: 'NC',
       balance: '--'
     };
+    
+    this.activeChat = newChatData;
     this.activeChatId = chatId;
+    
+    // Store chat data persistently
+    this.chatData[chatId] = newChatData;
+    
     this.messages[this.activeChatId] = [];
     
     this.showChatInterface();
     this.addToSidebar(this.activeChat);
-    this.addContextMessage();
     this.updateActiveCount();
     this.updateBreadcrumb('Financial Intelligence > Converge Chat > New Consultation');
   }
@@ -142,7 +157,7 @@ class ConvergeAI {
     document.getElementById('input-container').style.display = 'block';
     document.getElementById('archived-notice').style.display = 'none';
     
-    // Update header
+    // Update header with current active chat data
     document.getElementById('client-name').textContent = this.activeChat.name;
     document.getElementById('client-details').textContent = `${this.activeChat.company} • ${this.activeChat.accountType}`;
     document.getElementById('header-avatar').textContent = this.activeChat.avatar;
@@ -152,16 +167,22 @@ class ConvergeAI {
     // Clear and reload messages
     const chatMessages = document.getElementById('chat-messages');
     chatMessages.innerHTML = '';
-    this.messages[this.activeChatId].forEach(msg => this.addMessage(msg.content, msg.isUser, false));
+    
+    // Always add context message for active chats
+    if (this.viewMode === 'active') {
+      this.addContextMessage();
+    }
+    
+    // Load existing messages
+    if (this.messages[this.activeChatId]) {
+      this.messages[this.activeChatId].forEach(msg => this.addMessage(msg.content, msg.isUser, false));
+    }
     
     document.getElementById('message-input').focus();
   }
 
   addToSidebar(client) {
     const chatList = document.getElementById('active-chats');
-    
-    // Remove active class from all items
-    document.querySelectorAll('.cc-chat-item').forEach(item => item.classList.remove('active'));
     
     // Check if item already exists
     let existingItem = document.querySelector(`[data-chat-id="${client.id}"]`);
@@ -172,13 +193,11 @@ class ConvergeAI {
       chatList.appendChild(existingItem);
       
       existingItem.addEventListener('click', () => {
-        if (this.activeChatId !== client.id) {
-          this.switchToChat(client.id);
-        }
+        this.switchToChat(client.id);
       });
     }
     
-    existingItem.classList.add('active');
+    // Update content
     existingItem.innerHTML = `
       <div class="cc-chat-avatar">${client.avatar}</div>
       <div class="cc-chat-details">
@@ -187,31 +206,35 @@ class ConvergeAI {
         <div class="cc-chat-status">Live</div>
       </div>
     `;
+    
+    // Update sidebar selection
+    this.updateSidebarSelection(client.id);
   }
 
   switchToChat(chatId) {
-    // Find the chat data (simplified for demo)
-    if (chatId === 'james-jackson') {
-      this.activeChat = {
-        id: 'james-jackson',
-        clientId: 'P00051',
-        name: 'James Jackson',
-        company: 'Texas University',
-        accountType: 'UT Saver TSA 403(b)',
-        age: 35,
-        avatar: 'JJ',
-        balance: '$127,000'
-      };
+    console.log('Switching to chat:', chatId);
+    
+    // Don't switch if already on this chat
+    if (this.activeChatId === chatId && this.viewMode === 'active') {
+      return;
     }
     
+    // Get stored chat data
+    const chatData = this.chatData[chatId];
+    if (!chatData) {
+      console.error('No chat data found for:', chatId);
+      return;
+    }
+    
+    // Switch to this chat
+    this.activeChat = chatData;
     this.activeChatId = chatId;
     this.viewMode = 'active';
+    
+    console.log('Switched to chat data:', this.activeChat);
+    
     this.showChatInterface();
-    
-    // Update sidebar selection
-    document.querySelectorAll('.cc-chat-item').forEach(item => item.classList.remove('active'));
-    document.querySelector(`[data-chat-id="${chatId}"]`).classList.add('active');
-    
+    this.updateSidebarSelection(chatId);
     this.updateBreadcrumb('Financial Intelligence > Converge Chat > Active Consultation');
   }
 
@@ -241,6 +264,8 @@ class ConvergeAI {
       avatar: 'EC',
       balance: '$342,000'
     };
+    
+    // Don't store archived chat in chatData since it's read-only
     
     // Hide welcome
     document.getElementById('welcome-state').style.display = 'none';
@@ -447,6 +472,9 @@ class ConvergeAI {
     this.appendToChat(messageHtml);
     
     if (saveToHistory && this.activeChatId) {
+      if (!this.messages[this.activeChatId]) {
+        this.messages[this.activeChatId] = [];
+      }
       this.messages[this.activeChatId].push({ content, isUser, timestamp: new Date() });
     }
   }
